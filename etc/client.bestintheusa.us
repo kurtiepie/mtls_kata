@@ -1,0 +1,39 @@
+# TLS server certificate request
+
+# This file is used by the openssl req command. The subjectAltName cannot be
+# prompted for and must be specified in the SAN environment variable.
+
+[ default ]
+SAN                     = "client.bestintheusa.us"
+
+[ req ]
+default_bits            = 2048                  # RSA key size
+encrypt_key             = no                    # Protect private key
+default_md              = sha1                  # MD to use
+utf8                    = yes                   # Input is UTF-8
+string_mask             = utf8only              # Emit UTF-8 strings
+prompt                  = yes                   # Prompt for DN
+distinguished_name      = server_dn             # DN template
+req_extensions          = server_reqext         # Desired extensions
+req_extensions = v3_req
+
+[alt_names]
+DNS.1 = client.bestintheusa.us
+
+[v3_req]
+basicConstraints = CA:FALSE
+subjectAltName = @alt_names
+
+[ server_dn ]
+0.domainComponent       = "us"
+1.domainComponent       = "bestintheusa"
+organizationName        = "corruptible"
+organizationalUnitName  = "client"
+commonName              = "client.bestintheusa.us"
+commonName_max          = 64
+
+[ server_reqext ]
+keyUsage                = critical,digitalSignature,keyEncipherment
+extendedKeyUsage        = serverAuth,clientAuth
+subjectKeyIdentifier    = hash
+subjectAltName          = $ENV::SAN
